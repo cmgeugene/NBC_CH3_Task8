@@ -1,5 +1,5 @@
 ## 내일배움캠프 Unreal 트랙 8번 과제
-시연 영상 URL : 
+시연 영상 URL : https://youtu.be/SGgjm_8Eat0
 
 ### 필수 기능
 + 멀티 웨이브 구조 구현
