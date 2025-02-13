@@ -17,7 +17,7 @@ void AReverseControllItem::ActivateItem(AActor* Activator)
 	{
 		if (ASpartaCharacter* PlayerCharacter = Cast<ASpartaCharacter>(Activator))
 		{
-			PlayerCharacter->GetReverseControllEffect(ItemDuration);
+			PlayerCharacter->GetReverseControlEffect(ItemDuration);
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("Move Input reversed.")));
 			DestroyItem();
 

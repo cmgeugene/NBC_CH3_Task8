@@ -46,6 +46,8 @@ public:
 	TArray<FName> LevelMapNames;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
 	int32 ItemToSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
+	int32 ScoreToClear;
 	ASpawnVolume* SpawnVolumeInstance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level|Sound")
 	UAudioComponent* AudioComp;

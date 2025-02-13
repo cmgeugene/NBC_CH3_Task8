@@ -47,8 +47,17 @@ ASpartaCharacter::ASpartaCharacter()
 void ASpartaCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    
+    
     UpdateOverheadHP();
 }
+//void ASpartaCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+//{
+//    if (EndPlayReason == EEndPlayReason::LevelTransition)
+//    {
+//        GetWorldTimerManager().ClearTimer(BlindTimerHandle);
+//    }
+//}
 
 float ASpartaCharacter::GetHealth() const
 {
@@ -214,13 +223,8 @@ void ASpartaCharacter::GetSlowEffect(AActor* Activator, float ItemDuration, floa
 
                 GetWorld()->GetTimerManager().SetTimer(
                     SlowDurationTimerHandle,
-                    [MovementComponent, this]()
-                    {
-                        if (IsValid(MovementComponent))
-                        {
-                            MovementComponent->MaxWalkSpeed = OriginSpeed;
-                        }
-                    },
+                    this,
+                    &ASpartaCharacter::RestoreSlowEffect,
                     ItemDuration,
                     false
                 );
@@ -229,7 +233,7 @@ void ASpartaCharacter::GetSlowEffect(AActor* Activator, float ItemDuration, floa
     }
 }
 
-void ASpartaCharacter::GetReverseControllEffect(float ItemDuration)
+void ASpartaCharacter::GetReverseControlEffect(float ItemDuration)
 {
     if (!GetWorldTimerManager().IsTimerActive(ReverseControlTimerHandle))
     {
@@ -238,13 +242,8 @@ void ASpartaCharacter::GetReverseControllEffect(float ItemDuration)
 
     GetWorld()->GetTimerManager().SetTimer(
      ReverseControlTimerHandle,
-     [this]()
-     {
-         if (IsValid(this))
-         {
-             this->bIsMoveInputReversed = false;
-         }
-     },
+     this,
+     &ASpartaCharacter::RestoreReverseControlEffect,
      ItemDuration,
      false);
 }
@@ -257,20 +256,48 @@ void ASpartaCharacter::GetBlindEffect(float ItemDuration, float BlurStrength)
         {
             if (UUserWidget* HUDWidget = SpartaPlayerController->GetHUDWidget())
             {
+                //TWeakObjectPtr<UBackgroundBlur> WeakSelf = Cast<UBackgroundBlur>(HUDWidget->GetWidgetFromName(TEXT("BlindEffect")));
                 if (UBackgroundBlur* BlindEffect = Cast<UBackgroundBlur>(HUDWidget->GetWidgetFromName(TEXT("BlindEffect"))))
+                //if(WeakSelf.IsValid())
                 {
                     BlindEffect->SetBlurStrength(BlurStrength);
+                    
                     GetWorld()->GetTimerManager().SetTimer(
                         BlindTimerHandle,
-                        [BlindEffect]()
-                        {
-                            if (BlindEffect)
-                            {
-                                BlindEffect->SetBlurStrength(0.0f);
-                            }
-                        },
+                        this,
+                        &ASpartaCharacter::RestoreBlindEffect,
                         ItemDuration,
                         false);
+                }
+            }
+        }
+    }
+}
+void ASpartaCharacter::RestoreSlowEffect()
+{
+    
+    UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+    if (MovementComponent)
+    {
+        MovementComponent->MaxWalkSpeed = OriginSpeed;
+    }
+}
+void ASpartaCharacter::RestoreReverseControlEffect()
+{
+    bIsMoveInputReversed = false;
+}
+void ASpartaCharacter::RestoreBlindEffect()
+{
+    if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+    {
+        if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
+        {
+            if (UUserWidget* HUDWidget = SpartaPlayerController->GetHUDWidget())
+            {
+                UBackgroundBlur* BlindEffect = Cast<UBackgroundBlur>(HUDWidget->GetWidgetFromName(TEXT("BlindEffect")));
+                if (BlindEffect)
+                {
+                    BlindEffect->SetBlurStrength(0.0f);
                 }
             }
         }

@@ -24,6 +24,7 @@ ASpartaGameState::ASpartaGameState()
 	CurrentWaveIndex = 0;
 	MaxWaves = 3;
 	ItemToSpawn = 30;
+	ScoreToClear = 1000;
 
 	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
 	AudioComp->SetupAttachment(RootComponent);
@@ -120,7 +121,7 @@ void ASpartaGameState::StartLevel()
 		GetWorldTimerManager().SetTimer(
 			LevelTimerHandle,
 			this,
-			&ASpartaGameState::OnGameOver,
+			&ASpartaGameState::EndLevel,
 			LevelDuration,
 			false
 		);
@@ -175,6 +176,7 @@ void ASpartaGameState::EndLevel()
 			AddScore(Score);
 			CurrentLevelIndex++;
 			SpartaGameInstance->CurrentLevelIndex = CurrentLevelIndex;
+			
 		}
 	}
 
@@ -187,7 +189,7 @@ void ASpartaGameState::EndLevel()
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance);
-		if (LevelMapNames.IsValidIndex(CurrentLevelIndex) && SpartaGameInstance->TotalScore >= 1000)
+		if (LevelMapNames.IsValidIndex(CurrentLevelIndex) && SpartaGameInstance->TotalScore >= ScoreToClear)
 		{
 			UGameplayStatics::OpenLevel(GetWorld(), LevelMapNames[CurrentLevelIndex]);
 		}

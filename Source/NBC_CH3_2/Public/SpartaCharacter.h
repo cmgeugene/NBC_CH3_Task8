@@ -19,6 +19,7 @@ public:
 
 public:
 	void BeginPlay() override;
+	//void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	USpringArmComponent* SpringArmComp;
@@ -72,7 +73,10 @@ public:
 	UFUNCTION()
 	void StopJump(const FInputActionValue& Value);
 	void GetSlowEffect(AActor* Activator, float ItemDuration, float SlowingRate);
-	void GetReverseControllEffect(float ItemDuration);
+	void GetReverseControlEffect(float ItemDuration);
 	void GetBlindEffect(float ItemDuration, float BlurStrength);
+	void RestoreSlowEffect();
+	void RestoreReverseControlEffect();
+	void RestoreBlindEffect();
 
 };
